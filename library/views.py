@@ -30,6 +30,7 @@ def checkout_book(request):
                 book = Books.objects.get(book_id=book_id)
                 if book.no_of_copies > 0:
                     book.no_of_copies -= 1
+                    book.save()
                     checked_book = Circulation(book_id=book, member_id=member)
                     checked_book.save()
                     return JsonResponse({"message": "Created Successfully"})
@@ -101,6 +102,7 @@ def issue_book(book_id, member_id):
     book = Books.objects.get(book_id=book_id)
     if book.no_of_copies > 0:
         book.no_of_copies -= 1
+        book.save()
         checked_book = Circulation(book_id=book, member_id=member)
         checked_book.save()
         return JsonResponse({"message": "Created Successfully"})
