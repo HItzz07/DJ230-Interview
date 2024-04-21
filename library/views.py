@@ -26,7 +26,15 @@ def checkout_book(request):
             member_id = data.get('member_id', '')
             book_id = data.get('book_id', '')
             if member_id and book_id:
-                issue_book(book_id, member_id)
+                member = Members.objects.get(member_id=member_id)
+                book = Books.objects.get(book_id=book_id)
+                if book.no_of_copies > 0:
+                    book.no_of_copies -= 1
+                    checked_book = Circulation(book_id=book, member_id=member)
+                    checked_book.save()
+                    return JsonResponse({"message": "Created Successfully"})
+                else:
+                    return JsonResponse({'status':'false','message': 'Book not available'}, status=400)
     except Exception as e:
         print(e)
         return JsonResponse({'status':'false','message': e }, status=500)
